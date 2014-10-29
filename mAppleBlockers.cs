@@ -45,6 +45,7 @@ namespace AntMe.Spieler
     public class mAppleBlockers : Basisameise
     {
         bool guarding = false;
+        bool engaging = false;
         /// <summary>
         /// Bestimmt den Typ einer neuen Ameise.
         /// </summary>
@@ -68,7 +69,6 @@ namespace AntMe.Spieler
         /// </summary>
         public override void Wartet()
         {
-
             // Sollte die Ameise außerhalb des Nahrungsmittelradiuses liegen...
             if (EntfernungZuBau > 400 && Kaste != "Kämpfer")
             {
@@ -82,6 +82,11 @@ namespace AntMe.Spieler
                     // ... ansonsten soll sie sich ein bischen drehen (zufälliger Winkel
                     // zwischen -10 und 10 Grad) und wieder ein paar Schritte laufen.
                     DreheUmWinkel(Zufall.Zahl(-10, 10));
+                    GeheGeradeaus(40);
+                }
+                else
+                {
+                    DreheUmWinkel(90);
                     GeheGeradeaus(20);
                 }
             }
@@ -150,6 +155,7 @@ namespace AntMe.Spieler
         {
             if (Kaste == "Kämpfer")
             {
+                GeheGeradeaus(40);
                 guarding = true;
             }
         }
@@ -226,6 +232,7 @@ namespace AntMe.Spieler
             guarding = false;
             if (Kaste == "Kämpfer")
             {
+                engaging = true;
                 SprüheMarkierung(0, 150);
                 GreifeAn(wanze);
             }
@@ -257,7 +264,12 @@ namespace AntMe.Spieler
 
         public override void SiehtFeind(Ameise ameise)
         {
-            GreifeAn(ameise);
+            guarding = false;
+            if (Kaste == "Kämpfer")
+            {
+                engaging = true;
+                GreifeAn(ameise);
+            }
         }
 
         public override void WirdAngegriffen(Ameise ameise)
@@ -265,6 +277,7 @@ namespace AntMe.Spieler
             guarding = false;
             if (Kaste == "Kämpfer")
             {
+                engaging = true;
                 GreifeAn(ameise);
             }
         }
@@ -274,6 +287,7 @@ namespace AntMe.Spieler
             guarding = false;
             if (Kaste == "Kämpfer")
             {
+                engaging = true;
                 SprüheMarkierung(0, 150);
                 GreifeAn(wanze);
             }
