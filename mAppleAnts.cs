@@ -236,7 +236,10 @@ namespace AntMe.Spieler
 
         public override void SiehtFeind(Ameise ameise)
         {
-            GreifeAn(ameise);
+            if (Kaste == "Kämpfer")
+            {
+                GreifeAn(ameise);
+            }
         }
 
         public override void WirdAngegriffen(Ameise ameise)
