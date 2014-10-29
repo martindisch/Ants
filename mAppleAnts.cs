@@ -44,7 +44,6 @@ namespace AntMe.Spieler
 
     public class mAppleAnts : Basisameise
     {
-        bool guarding = false;
         /// <summary>
         /// Bestimmt den Typ einer neuen Ameise.
         /// </summary>
@@ -77,13 +76,10 @@ namespace AntMe.Spieler
             }
             else
             {
-                if (!guarding)
-                {
                     // ... ansonsten soll sie sich ein bischen drehen (zufälliger Winkel
                     // zwischen -10 und 10 Grad) und wieder ein paar Schritte laufen.
                     DreheUmWinkel(Zufall.Zahl(-10, 10));
                     GeheGeradeaus(20);
-                }
             }
 
             // Wenn die restliche verfügbare Strecke der Ameise (minus einem Puffer
@@ -135,22 +131,6 @@ namespace AntMe.Spieler
                     Nimm(obst);
                     GeheZuBau();
                 }
-            }
-        }
-
-        public override void Sieht(Zucker zucker)
-        {
-            if (Kaste == "Kämpfer" && !guarding)
-            {
-                GeheZuZiel(zucker);
-            }
-        }
-
-        public override void ZielErreicht(Zucker zucker)
-        {
-            if (Kaste == "Kämpfer")
-            {
-                guarding = true;
             }
         }
 
@@ -223,7 +203,6 @@ namespace AntMe.Spieler
         /// <param name="wanze">Der nächstgelegene Wanze.</param>
         public override void SiehtFeind(Wanze wanze)
         {
-            guarding = false;
             if (Kaste == "Kämpfer")
             {
                 SprüheMarkierung(0, 150);
@@ -262,7 +241,6 @@ namespace AntMe.Spieler
 
         public override void WirdAngegriffen(Ameise ameise)
         {
-            guarding = false;
             if (Kaste == "Kämpfer")
             {
                 GreifeAn(ameise);
@@ -271,7 +249,6 @@ namespace AntMe.Spieler
 
         public override void WirdAngegriffen(Wanze wanze)
         {
-            guarding = false;
             if (Kaste == "Kämpfer")
             {
                 SprüheMarkierung(0, 150);
