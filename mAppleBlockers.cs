@@ -45,7 +45,6 @@ namespace AntMe.Spieler
     public class mAppleBlocker : Basisameise
     {
         bool guarding = false;
-        bool engaging = false;
         /// <summary>
         /// Bestimmt den Typ einer neuen Ameise.
         /// </summary>
