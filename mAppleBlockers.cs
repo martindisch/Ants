@@ -42,7 +42,7 @@ namespace AntMe.Spieler
         AngriffModifikator = 2
     )]
 
-    public class mAppleBlockers : Basisameise
+    public class mAppleBlocker : Basisameise
     {
         bool guarding = false;
         bool engaging = false;

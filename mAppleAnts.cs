@@ -42,7 +42,7 @@ namespace AntMe.Spieler
         AngriffModifikator = 2
     )]
 
-    public class mAppleAnts : Basisameise
+    public class mAppleAnt : Basisameise
     {
         /// <summary>
         /// Bestimmt den Typ einer neuen Ameise.
