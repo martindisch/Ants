@@ -3,16 +3,8 @@ using System.Collections.Generic;
 
 using AntMe.Deutsch;
 
-// Füge hier hinter AntMe.Spieler einen Punkt und deinen Namen ohne Leerzeichen
-// ein! Zum Beispiel "AntMe.Spieler.WolfgangGallo".
 namespace AntMe.Spieler
 {
-
-    /// <summary>
-    /// Ameisendemo die sich darauf konzentriert effizient Äpfel einzusammeln.
-    /// Andere Nahrungsmittel werden ignoriert und den Käfern wird nur versucht
-    /// auszuweichen.
-    /// </summary>
 
     [Spieler(
         Volkname = "mAppleAnts",
@@ -44,12 +36,6 @@ namespace AntMe.Spieler
 
     public class mAppleAnt : Basisameise
     {
-        /// <summary>
-        /// Bestimmt den Typ einer neuen Ameise.
-        /// </summary>
-        /// <param name="anzahl">Die Anzahl der von jedem Typ bereits
-        /// vorhandenen Ameisen.</param>
-        /// <returns>Der Name des Typs der Ameise.</returns>
         public override string BestimmeKaste(Dictionary<string, int> anzahl)
         {
                 if (anzahl["Kämpfer"] <= anzahl["Sammler"])
@@ -61,32 +47,24 @@ namespace AntMe.Spieler
 
         #region Fortbewegung
 
-        /// <summary>
-        /// Wird wiederholt aufgerufen, wenn der die Ameise nicht weiss wo sie
-        /// hingehen soll.
-        /// </summary>
         public override void Wartet()
         {
 
-            // Sollte die Ameise außerhalb des Nahrungsmittelradiuses liegen...
+            // If outside of the food spawn radius, return home
             if (EntfernungZuBau > 400 && Kaste != "Kämpfer")
             {
-                // ... soll sie wieder heim gehen.
                 GeheZuBau();
             }
             else
             {
-                    // ... ansonsten soll sie sich ein bischen drehen (zufälliger Winkel
-                    // zwischen -10 und 10 Grad) und wieder ein paar Schritte laufen.
+                    // if not, turn randomly and walk
                     DreheUmWinkel(Zufall.Zahl(-10, 10));
                     GeheGeradeaus(20);
             }
 
-            // Wenn die restliche verfügbare Strecke der Ameise (minus einem Puffer
-            // von 50 Schritten) kleiner als die Entfernung zum Bau ist...
+            // Return home if ant has walked a lot already
             if (Reichweite - ZurückgelegteStrecke - 50 < EntfernungZuBau)
             {
-                // ... soll sie nach Hause gehen um nicht zu sterben.
                 GeheZuBau();
             }
 
@@ -95,36 +73,21 @@ namespace AntMe.Spieler
         #endregion
         #region Nahrung
 
-        /// <summary>
-        /// Wird wiederholt aufgerufen, wenn die Ameise mindstens ein
-        /// Obststück sieht.
-        /// </summary>
-        /// <param name="obst">Das nächstgelegene Obststück.</param>
         public override void Sieht(Obst obst)
         {
-            // Sofern der Apfel noch Träger braucht soll die Ameise zum Apfel.
+            // Give a hand if more power is needed to carry
             if (BrauchtNochTräger(obst))
             {
                 GeheZuZiel(obst);
             }
         }
 
-        /// <summary>
-        /// Wird einmal aufgerufen, wenn die Ameise ein Obststück als Ziel hat und
-        /// bei diesem ankommt.
-        /// </summary>
-        /// <param name="obst">Das Obstück.</param>
         public override void ZielErreicht(Obst obst)
         {
-            // Die Ameise soll nochmal prüfen ob der Apfel überhaupt noch Träger
-            // braucht.
+            // Check if more ants carrying are required
             if (BrauchtNochTräger(obst))
             {
-                // Wenn noch Träger gebraucht werden soll die Ameise eine Markierung
-                // sprühen die als Information die Menge benötigter Ameisen hat. Da die
-                // benötigte Menge nicht genau ermittelt werden kann wird hier nur
-                // geschätzt. Es wird erwartet, dass 20 gebraucht werden und dass in
-                // "AnzahlInSichtweite" etwa die Zahl tragenden Ameisen steckt.
+                // If that's the case, anticipate the amount of ants needed and create a marking
                 SprüheMarkierung(20 - AnzahlAmeisenInSichtweite, 200);
                 if (Kaste == "Sammler")
                 {
@@ -137,29 +100,18 @@ namespace AntMe.Spieler
         #endregion
         #region Kommunikation
 
-        /// <summary>
-        /// Wird einmal aufgerufen, wenn die Ameise eine Markierung des selben
-        /// Volkes riecht. Einmal gerochene Markierungen werden nicht erneut
-        /// gerochen.
-        /// </summary>
-        /// <param name="markierung">Die nächste neue Markierung.</param>
         public override void RiechtFreund(Markierung markierung)
         {
 
             if (Kaste == "Sammler")
             {
-                // Sollte die Ameise nicht schon Obst im Auge haben oder auf dem Weg zum
-                // Bau sein soll sie, wenn die angeforderte Menge Ameisen die Ameisenmenge
-                // der gerade in Sichtweite befindlichen Ameisen übersteigt, zum
-                // Markierungsmittelpunkt gehen um dort hoffentlich den Apfel zu sehen.
+                // If apple needs more carrying, go there
                 if (!(Ziel is Obst) &&
                     !(Ziel is Bau) &&
                     AnzahlAmeisenInSichtweite < markierung.Information)
                 {
                     GeheZuZiel(markierung);
-                    // Sollte die Entfernung mehr als 50 schritte zum Mittelpunkt betragen,
-                    // soll eine Folgemarkierung gesprüht werden um denn Effektradius zu 
-                    // erhöhen.
+                    // Spray another mark if the way is too long for others to find
                     if (Koordinate.BestimmeEntfernung(this, markierung) > 50)
                     {
                         SprüheMarkierung(
@@ -169,8 +121,7 @@ namespace AntMe.Spieler
                 }
                 else
                 {
-                    // In allen anderen Fällen soll sie kurz stehen bleiben um zu
-                    // verhindern, dass die Ameise dem Apfel ewig hinterher läuft.
+                    // In all other cases, stand still to not follow the apple indefinitely
                     BleibStehen();
                 }
             }
@@ -179,9 +130,7 @@ namespace AntMe.Spieler
                 if (Ziel is Wanze)
                 {
                     GeheZuZiel(markierung);
-                    // Sollte die Entfernung mehr als 50 schritte zum Mittelpunkt betragen,
-                    // soll eine Folgemarkierung gesprüht werden um denn Effektradius zu 
-                    // erhöhen.
+                    // Spray another mark if the way is too long for others to find
                     if (Koordinate.BestimmeEntfernung(this, markierung) > 50)
                     {
                         SprüheMarkierung(
@@ -196,11 +145,6 @@ namespace AntMe.Spieler
         #endregion
         #region Kampf
 
-        /// <summary>
-        /// Wird wiederholt aufgerufen, wenn die Ameise mindestens einen Käfer
-        /// sieht.
-        /// </summary>
-        /// <param name="wanze">Der nächstgelegene Wanze.</param>
         public override void SiehtFeind(Wanze wanze)
         {
             if (Kaste == "Kämpfer")
@@ -210,15 +154,12 @@ namespace AntMe.Spieler
             }
             else
             {
-                // Bei Käfersicht wird ermittelt ob die Ameise evtl. kollidiert, wenn sie
-                // geradeaus weitergeht.
+                // Check if we collide with the bug
                 int relativeRichtung =
                     Koordinate.BestimmeRichtung(this, wanze) - Richtung;
                 if (relativeRichtung > -15 && relativeRichtung < 15)
                 {
-                    // Wenn ja, soll sie erstmal die Nahrung fallen lassen um schneller zu
-                    // laufen und dann, je nachdem auf welcher Seite der Käfer ist, in einem
-                    // 20 Grad-Winkel in die andere Richtung weggehen.
+                    // If yes, drop the apple to walk faster and evade
                     LasseNahrungFallen();
                     if (relativeRichtung < 0)
                     {
@@ -262,44 +203,33 @@ namespace AntMe.Spieler
         #endregion
         #region Sonstiges
 
-        /// <summary>
-        /// Wird unabhängig von äußeren Umständen in jeder Runde aufgerufen.
-        /// </summary>
         public override void Tick()
         {
 
             if (Kaste == "Kämpfer")
             {
-                // Sollte eine Ameise durch den Kampf unter die 2/3-Marke ihrer Energie
-                // fallen soll sie nach Hause gehen um aufzuladen.
+                // Go home if too much energy has been lost during a fight
                 if (AktuelleEnergie < MaximaleEnergie * 2 / 3)
                 {
                     GeheZuBau();
                 }
             }
 
-            // Sollte die Ameise gerade mit Nahrung unterwegs sein...
+            // If more ants are required to carry the apple, call for help
             if (Ziel != null && GetragenesObst != null)
             {
-                // ... und noch Helfer für den Apfel gebraucht werden...
                 if (BrauchtNochTräger(GetragenesObst))
                 {
-                    // ... soll sie eine Markierung sprühen die die Information enthält,
-                    // wie viele Ameisen noch beim Tragen helfen sollen.
                     SprüheMarkierung(20 - AnzahlAmeisenInSichtweite, 200);
                 }
             }
 
-            // Sollte die Ameise, während sie Obst trägt, das Ziel "Bau" verlieren,
-            // wird das Ziel neu gesetzt.
             if (GetragenesObst != null)
             {
                 GeheZuBau();
             }
 
-            // Sollte die Ameise einem Stück Obst hinterher laufen das garkeine Träger
-            // mehr braucht soll sie stehen bleiben um anschließend durch "wartet"
-            // wieder umher geschickt zu werden.
+            // If no help is needed, stand still to not follow the apple indefinitely
             if (Ziel is Obst && !BrauchtNochTräger((Obst)Ziel))
             {
                 BleibStehen();
