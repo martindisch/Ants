@@ -32,6 +32,16 @@ namespace AntMe.Spieler
         EnergieModifikator = 2,
         AngriffModifikator = 2
     )]
+    [Kaste(
+        Name = "Scout",
+        GeschwindigkeitModifikator = 2,
+        DrehgeschwindigkeitModifikator = -1,
+        LastModifikator = -1,
+        ReichweiteModifikator = 0,
+        SichtweiteModifikator = 2,
+        EnergieModifikator = -1,
+        AngriffModifikator = -1
+    )]
 
 	public class mAggressorAnt : Basisameise
 	{
