@@ -58,7 +58,7 @@ namespace AntMe.Spieler
 		{
             if (anzahl["Scout"] > 0)
             {
-                if (anzahl["Soldier"] / anzahl["Scout"] < 3)
+                if (anzahl["Soldier"] / anzahl["Scout"] < 2)
                 {
                     return "Soldier";
                 }
@@ -180,6 +180,13 @@ namespace AntMe.Spieler
 		/// <param name="ameise">Die nächstgelegen feindliche Ameise.</param>
 		public override void SiehtFeind(Ameise ameise)
 		{
+            if (Kaste == "Scout")
+            {
+                if (AnzahlFremderAmeisenInSichtweite > 5)
+                {
+                    SprüheMarkierung(AnzahlFremderAmeisenInSichtweite, 500);
+                }
+            }
 		}
 
 		/// <summary>
