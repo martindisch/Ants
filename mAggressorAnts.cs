@@ -56,7 +56,14 @@ namespace AntMe.Spieler
 		/// <returns>Der Name der Kaste der Ameise.</returns>
 		public override string BestimmeKaste(Dictionary<string, int> anzahl)
 		{
-			return "Standard";
+            if (anzahl["Scout"] > 0)
+            {
+                if (anzahl["Soldier"] / anzahl["Scout"] < 3)
+                {
+                    return "Soldier";
+                }
+            }
+            return "Scout";
 		}
 
 		#endregion
@@ -69,6 +76,8 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void Wartet()
 		{
+            DreheUmWinkel(Zufall.Zahl(-45, 45));
+            GeheGeradeaus(500);
 		}
 
 		/// <summary>
@@ -77,6 +86,7 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void WirdMüde()
 		{
+            GeheZuBau();
 		}
 
 		#endregion
@@ -207,6 +217,10 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void Tick()
 		{
+            if (AktuelleEnergie < MaximaleEnergie / 2)
+            {
+                GeheZuBau();
+            }
 		}
 
 		#endregion
