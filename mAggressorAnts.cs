@@ -46,6 +46,8 @@ namespace AntMe.Spieler
 	public class mAggressorAnt : Basisameise
 	{
 
+        private Ameise target;
+
 		#region Kaste
 
 		/// <summary>
@@ -141,6 +143,7 @@ namespace AntMe.Spieler
 		/// <param name="markierung">Die nächste neue Markierung.</param>
 		public override void RiechtFreund(Markierung markierung)
 		{
+            GeheZuZiel(markierung);
 		}
 
 		/// <summary>
@@ -187,6 +190,11 @@ namespace AntMe.Spieler
                     SprüheMarkierung(AnzahlFremderAmeisenInSichtweite, 500);
                 }
             }
+            else
+            {
+                target = ameise;
+                GreifeAn(ameise);
+            }
 		}
 
 		/// <summary>
@@ -227,6 +235,10 @@ namespace AntMe.Spieler
             if (AktuelleEnergie < MaximaleEnergie / 2)
             {
                 GeheZuBau();
+            }
+            if (target != null)
+            {
+                SprüheMarkierung(5, 15);
             }
 		}
 
