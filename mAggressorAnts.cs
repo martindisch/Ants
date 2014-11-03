@@ -47,6 +47,7 @@ namespace AntMe.Spieler
 	{
 
         private Ameise target;
+        private int max = 0;
 
 		#region Kaste
 
@@ -143,7 +144,14 @@ namespace AntMe.Spieler
 		/// <param name="markierung">Die nächste neue Markierung.</param>
 		public override void RiechtFreund(Markierung markierung)
 		{
-            GeheZuZiel(markierung);
+            if (markierung.Information > max)
+            {
+                max = markierung.Information;
+                if (Kaste == "Soldier")
+                {
+                    GeheZuZiel(markierung);
+                }
+            }
 		}
 
 		/// <summary>
@@ -185,15 +193,27 @@ namespace AntMe.Spieler
 		{
             if (Kaste == "Scout")
             {
-                if (AnzahlFremderAmeisenInSichtweite > 5)
+                if (AnzahlFremderAmeisenInSichtweite > max)
                 {
-                    SprüheMarkierung(AnzahlFremderAmeisenInSichtweite, 500);
+                    max = AnzahlFremderAmeisenInSichtweite;
+                    SprüheMarkierung(AnzahlFremderAmeisenInSichtweite, 1000);
                 }
             }
             else
             {
-                target = ameise;
-                GreifeAn(ameise);
+                if (target != null)
+                {
+                    if (Koordinate.BestimmeEntfernung(this, target) > Koordinate.BestimmeEntfernung(this, ameise))
+                    {
+                        target = ameise;
+                        GreifeAn(ameise);
+                    }
+                }
+                else
+                {
+                    target = ameise;
+                    GreifeAn(ameise);
+                }
             }
 		}
 
@@ -235,10 +255,6 @@ namespace AntMe.Spieler
             if (AktuelleEnergie < MaximaleEnergie / 2)
             {
                 GeheZuBau();
-            }
-            if (target != null)
-            {
-                SprüheMarkierung(5, 15);
             }
 		}
 
