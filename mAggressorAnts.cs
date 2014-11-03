@@ -48,6 +48,8 @@ namespace AntMe.Spieler
 
         private Ameise target;
         private int max = 0;
+        private bool goingHome = false;
+        private bool engaging = false;
 
 		#region Kaste
 
@@ -89,6 +91,7 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void WirdMüde()
 		{
+            goingHome = true;
             GeheZuBau();
 		}
 
@@ -147,9 +150,10 @@ namespace AntMe.Spieler
             if (markierung.Information > max)
             {
                 max = markierung.Information;
-                if (Kaste == "Soldier")
+                if (Kaste == "Soldier" && !engaging && !goingHome)
                 {
-                    GeheZuZiel(markierung);
+                    DreheInRichtung(Koordinate.BestimmeRichtung(this, markierung));
+                    GeheGeradeaus(1000);
                 }
             }
 		}
@@ -201,17 +205,19 @@ namespace AntMe.Spieler
             }
             else
             {
-                if (target != null)
+                if (target != null && !goingHome)
                 {
                     if (Koordinate.BestimmeEntfernung(this, target) > Koordinate.BestimmeEntfernung(this, ameise))
                     {
                         target = ameise;
+                        engaging = true;
                         GreifeAn(ameise);
                     }
                 }
                 else
                 {
                     target = ameise;
+                    engaging = true;
                     GreifeAn(ameise);
                 }
             }
@@ -233,6 +239,9 @@ namespace AntMe.Spieler
 		/// <param name="ameise">Die angreifende feindliche Ameise.</param>
 		public override void WirdAngegriffen(Ameise ameise)
 		{
+            target = ameise;
+            engaging = true;
+            GreifeAn(ameise);
 		}
 
 		#endregion
@@ -254,7 +263,12 @@ namespace AntMe.Spieler
 		{
             if (AktuelleEnergie < MaximaleEnergie / 2)
             {
+                goingHome = true;
                 GeheZuBau();
+            }
+            if (target == null)
+            {
+                engaging = false;
             }
 		}
 
