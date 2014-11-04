@@ -168,6 +168,22 @@ namespace AntMe.Spieler
 		/// <param name="wanze">Die nächstgelegene Wanze.</param>
 		public override void SiehtFeind(Wanze wanze)
 		{
+            // Check if we collide with the bug
+            int relativeRichtung = Koordinate.BestimmeRichtung(this, wanze) - Richtung;
+            if (relativeRichtung > -15 && relativeRichtung < 15)
+            {
+                // If yes, drop the food to walk faster and evade
+                LasseNahrungFallen();
+                if (relativeRichtung < 0)
+                {
+                    DreheUmWinkel(20 + relativeRichtung);
+                }
+                else
+                {
+                    DreheUmWinkel(-20 - relativeRichtung);
+                }
+                GeheGeradeaus(100);
+            }
 		}
 
 		/// <summary>
