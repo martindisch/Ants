@@ -24,13 +24,13 @@ namespace AntMe.Spieler
 	// Eine genauere Beschreibung gibts in Lektion 6 des Ameisen-Tutorials.
 	[Kaste(
 		Name = "Standard",
-		GeschwindigkeitModifikator = 0,
-		DrehgeschwindigkeitModifikator = 0,
-		LastModifikator = 0,
-		ReichweiteModifikator = 0,
-		SichtweiteModifikator = 0,
-		EnergieModifikator = 0,
-		AngriffModifikator = 0
+		GeschwindigkeitModifikator = 1,
+		DrehgeschwindigkeitModifikator = -1,
+		LastModifikator = 2,
+		ReichweiteModifikator = -1,
+		SichtweiteModifikator = 1,
+		EnergieModifikator = -1,
+		AngriffModifikator = -1
 	)]
 
 	public class mSugarAnt : Basisameise
@@ -59,6 +59,11 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void Wartet()
 		{
+            if (Ziel == null)
+            {
+                DreheUmWinkel(Zufall.Zahl(-10, 10));
+                GeheGeradeaus(20);
+            }
 		}
 
 		/// <summary>
@@ -67,6 +72,7 @@ namespace AntMe.Spieler
 		/// </summary>
 		public override void WirdMüde()
 		{
+            GeheZuBau();
 		}
 
 		#endregion
@@ -80,6 +86,10 @@ namespace AntMe.Spieler
 		/// <param name="zucker">Der nächstgelegene Zuckerhaufen.</param>
 		public override void Sieht(Zucker zucker)
 		{
+            if (AktuelleLast == 0)
+            {
+                GeheZuZiel(zucker);
+            }
 		}
 
 		/// <summary>
@@ -98,6 +108,9 @@ namespace AntMe.Spieler
 		/// <param name="zucker">Der Zuckerhaufen.</param>
 		public override void ZielErreicht(Zucker zucker)
 		{
+            SprüheMarkierung(1, 2000);
+            Nimm(zucker);
+            GeheZuBau();
 		}
 
 		/// <summary>
@@ -121,6 +134,10 @@ namespace AntMe.Spieler
 		/// <param name="markierung">Die nächste neue Markierung.</param>
 		public override void RiechtFreund(Markierung markierung)
 		{
+            if (Ziel == null)
+            {
+                GeheZuZiel(markierung);
+            }
 		}
 
 		/// <summary>
