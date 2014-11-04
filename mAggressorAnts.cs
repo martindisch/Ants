@@ -45,8 +45,8 @@ namespace AntMe.Spieler
 
 	public class mAggressorAnt : Basisameise
 	{
-
-        private Ameise target;
+        private Wanze wTarget;
+        private Ameise aTarget;
         private int max = 0;
         private bool goingHome = false;
         private bool engaging = false;
@@ -186,6 +186,13 @@ namespace AntMe.Spieler
 		/// <param name="wanze">Die nächstgelegene Wanze.</param>
 		public override void SiehtFeind(Wanze wanze)
 		{
+            SprüheMarkierung(0, 200);
+            if (Kaste == "Soldier")
+            {
+                wTarget = wanze;
+                engaging = true;
+                GreifeAn(wanze);
+            }
 		}
 
 		/// <summary>
@@ -205,18 +212,18 @@ namespace AntMe.Spieler
             }
             else
             {
-                if (target != null && !goingHome)
+                if (aTarget != null && wTarget != null && !goingHome)
                 {
-                    if (Koordinate.BestimmeEntfernung(this, target) > Koordinate.BestimmeEntfernung(this, ameise))
+                    if (Koordinate.BestimmeEntfernung(this, aTarget) > Koordinate.BestimmeEntfernung(this, ameise))
                     {
-                        target = ameise;
+                        aTarget = ameise;
                         engaging = true;
                         GreifeAn(ameise);
                     }
                 }
                 else
                 {
-                    target = ameise;
+                    aTarget = ameise;
                     engaging = true;
                     GreifeAn(ameise);
                 }
@@ -230,6 +237,17 @@ namespace AntMe.Spieler
 		/// <param name="wanze">Die angreifende Wanze.</param>
 		public override void WirdAngegriffen(Wanze wanze)
 		{
+            SprüheMarkierung(0, 200);
+            if (Kaste == "Soldier")
+            {
+                wTarget = wanze;
+                engaging = true;
+                GreifeAn(wanze);
+            }
+            else
+            {
+                GeheWegVon(wanze);
+            }
 		}
 
 		/// <summary>
@@ -239,9 +257,12 @@ namespace AntMe.Spieler
 		/// <param name="ameise">Die angreifende feindliche Ameise.</param>
 		public override void WirdAngegriffen(Ameise ameise)
 		{
-            target = ameise;
-            engaging = true;
-            GreifeAn(ameise);
+            if (Kaste == "Soldier")
+            {
+                aTarget = ameise;
+                engaging = true;
+                GreifeAn(ameise);
+            }
 		}
 
 		#endregion
@@ -266,7 +287,7 @@ namespace AntMe.Spieler
                 goingHome = true;
                 GeheZuBau();
             }
-            if (target == null)
+            if (aTarget == null && wTarget == null)
             {
                 engaging = false;
             }
