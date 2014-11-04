@@ -99,6 +99,10 @@ namespace AntMe.Spieler
 		/// <param name="obst">Das nächstgelegene Obststück.</param>
 		public override void Sieht(Obst obst)
 		{
+            if (BrauchtNochTräger(obst))
+            {
+                GeheZuZiel(obst);
+            }
 		}
 
 		/// <summary>
@@ -120,6 +124,12 @@ namespace AntMe.Spieler
 		/// <param name="obst">Das Obstück.</param>
 		public override void ZielErreicht(Obst obst)
 		{
+            if (BrauchtNochTräger(obst))
+            {
+                SprüheMarkierung(2, 2000);
+                Nimm(obst);
+                GeheZuBau();
+            }
 		}
 
 		#endregion
