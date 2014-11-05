@@ -139,10 +139,16 @@ namespace AntMe.Spieler
 
 		public override void WirdAngegriffen(Wanze wanze)
 		{
+            // Leave the scene quickly
+            LasseNahrungFallen();
+            GeheWegVon(wanze, 100);
 		}
 
 		public override void WirdAngegriffen(Ameise ameise)
 		{
+            // Leave the scene quickly
+            LasseNahrungFallen();
+            GeheWegVon(ameise, 100);
 		}
 
 		#endregion
